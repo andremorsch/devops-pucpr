@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from datetime import datetime
+from typing import Optional
+import requests
 
 LISTA_TAREFAS = []
 APP = FastAPI()
@@ -52,14 +54,32 @@ def criar_tarefa(titulo: str, descricao: str):
     return tarefa
 
 @APP.put("/tarefas/{id}")
-def atualizar_tarefa(id: int, titulo: str, descricao: str, concluido: bool):
+def atualizar_tarefa(id: int, titulo: Optional[str] = None, descricao: Optional[str] = None, concluido: Optional[bool] = None):
     if id < 0 or id >= len(LISTA_TAREFAS):
         raise HTTPException(status_code=404, detail="Tarefa não encontrada")
 
     tarefa = LISTA_TAREFAS[id]
-    tarefa["titulo"] = titulo
-    tarefa["descricao"] = descricao
-    tarefa["concluido"] = concluido
+    prev_concluido = tarefa.get("concluido", False)
+
+    # Atualizar somente os campos fornecidos
+    if titulo is not None:
+        tarefa["titulo"] = titulo
+    if descricao is not None:
+        tarefa["descricao"] = descricao
+    if concluido is not None:
+        tarefa["concluido"] = concluido
+
+    # Se a tarefa foi atualizada para concluída agora, chamar serviço de notificação
+    if (not prev_concluido) and (concluido is True):
+        try:
+            payload = {
+                "titulo": tarefa["titulo"],
+                "data_finalizacao": datetime.now().isoformat()
+            }
+            requests.post("http://localhost:8001/notificar", json=payload, timeout=2)
+        except Exception as e:
+            print(f"Falha ao notificar: {e}")
+
     return tarefa
 
 @APP.delete("/tarefas/{id}", status_code=200)
