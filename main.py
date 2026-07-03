@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from datetime import datetime
 
 LISTA_TAREFAS = []
@@ -20,8 +20,6 @@ def index():
 
 @APP.get("/tarefas")
 def listar_tarefas():
-    global LISTA_TAREFAS
-
     # Lista tarefas (somente id e titulo)
     if len(LISTA_TAREFAS) == 0:
         return LISTA_TAREFAS
@@ -45,3 +43,29 @@ def listar_tarefa_especifica(id: int):
         return LISTA_TAREFAS[id]
     
     return mensagem_padrao
+
+@APP.post("/tarefas", status_code=201)
+def criar_tarefa(titulo: str, descricao: str):
+    nova_id = len(LISTA_TAREFAS)
+    tarefa = nova_tarefa(nova_id, titulo, descricao)
+    LISTA_TAREFAS.append(tarefa)
+    return tarefa
+
+@APP.put("/tarefas/{id}")
+def atualizar_tarefa(id: int, titulo: str, descricao: str, concluido: bool):
+    if id < 0 or id >= len(LISTA_TAREFAS):
+        raise HTTPException(status_code=404, detail="Tarefa não encontrada")
+
+    tarefa = LISTA_TAREFAS[id]
+    tarefa["titulo"] = titulo
+    tarefa["descricao"] = descricao
+    tarefa["concluido"] = concluido
+    return tarefa
+
+@APP.delete("/tarefas/{id}", status_code=200)
+def deletar_tarefa(id: int):
+    if id < 0 or id >= len(LISTA_TAREFAS):
+        raise HTTPException(status_code=404, detail="Tarefa não encontrada")
+
+    tarefa_removida = LISTA_TAREFAS.pop(id)
+    return {"mensagem": "Tarefa removida com sucesso", "tarefa": tarefa_removida}
