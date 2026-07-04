@@ -3,10 +3,16 @@ from pydantic import BaseModel
 
 APP_NOTIFICACAO = FastAPI()
 
+NOTIFICACOES = []
 
 class Notificacao(BaseModel):
 	titulo: str
 	data_finalizacao: str
+
+
+@APP_NOTIFICACAO.get("/notificar")
+def listar_notificacoes():
+    return NOTIFICACOES
 
 
 @APP_NOTIFICACAO.post("/notificar")
