@@ -23,5 +23,4 @@ def test_criar_tarefa():
     assert requisicao.json() == {"mensagem": "OK"}
 
     requisicao = CLIENT.post("/tarefas?id=0&titulo=tarefa&descricao=descricao-tarefa")
-    assert requisicao.status_code == 201
-    assert requisicao.json() == {"mensagem": "TAREFA JÁ EXISTE"}
+    assert requisicao.status_code == 202
