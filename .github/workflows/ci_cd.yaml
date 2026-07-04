@@ -2,7 +2,7 @@ name: 'Pipeline 04/07/26'
 
 on:
   # Habilita botão na interface Web para acionar manualmente a pipeline
-  push:
+  pull_request:
     branches: 
       - main
   workflow_dispatch:
