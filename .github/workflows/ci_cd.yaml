@@ -15,3 +15,9 @@ jobs:
         run: pip install -r requirements.txt
       - name: 'Testes unitários'
         run: pytest
+      - name: 'Cobertura de código'
+        run: pytest --cov
+      - name: 'Análise estática'
+        run: bandit -r app/
+      - name: 'Linting'
+        run: pylint app/
