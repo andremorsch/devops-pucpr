@@ -1,2 +1,6 @@
 fastapi[standard]
-requests
+pytest
+httpx2
+pytest-cov
+bandit
+pylint
