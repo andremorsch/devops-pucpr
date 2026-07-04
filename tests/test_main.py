@@ -13,6 +13,13 @@ def test_index():
     assert requisicao.status_code == 200
     assert requisicao.json() == "Olá, DevOps!"
 
+
+def test_health():
+    requisicao = CLIENT.get("/health")
+
+    assert requisicao.status_code == 200
+    assert requisicao.json() == {"status": "OK"}
+
 # Criar um teste unitário para validar se a tarefa foi criada com sucesso
 # CLIENT.post(...) (substituir pela string para criação de tarefa)
 # Verificar se o código de status é 201

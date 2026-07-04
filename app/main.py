@@ -29,6 +29,10 @@ def verificar_existencia_tarefa(id: int):
 def index():
     return "Olá, DevOps!"
 
+@APP.get("/health")
+def health():
+    return {"status": "OK"}
+
 @APP.get("/tarefas")
 def listar_tarefas():
     # Lista tarefas (somente id e titulo)
